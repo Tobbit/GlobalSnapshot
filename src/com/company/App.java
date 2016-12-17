@@ -21,12 +21,14 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Drawing Operations Test");
+        Controller controller = new Controller();
         Group root = new Group();
         Node[] nodes = new Node[5];
         for(int i = 0; i < nodes.length; i++){
             Canvas canvas = new Canvas(1000,1000);
+            Node node = new Node(controller);
             Label label = new Label();
-            Node node = new Node(label);
+            controller.addBankLabel(node,label);
             label.setText("Bank "+node.getNumber()+"\n"+"Konto: "+node.getValue());
             label.setTranslateX(node.getPosition().x+Config.RADIUS/2);
             label.setTranslateY(node.getPosition().y+Config.RADIUS/2);

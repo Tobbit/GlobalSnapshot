@@ -2,8 +2,6 @@ package com.company;
 
 import com.sun.javafx.geom.Point2D;
 import javafx.application.Platform;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
 
 import java.util.*;
 
@@ -17,10 +15,10 @@ public class Node extends Thread {
     private int value = 100;
     private LinkedList<Message> channel;
     private boolean isRunning = true;
-    private final Label label;
+    private final Controller ctr;
 
-    public Node(Label label) {
-        this.label = label;
+    public Node(Controller ctr) {
+        this.ctr = ctr;
         neighbors = new ArrayList<>();
         number = ++countID;
         channel = new LinkedList<>();
@@ -96,14 +94,7 @@ public class Node extends Thread {
 
     private void setValue(int value) {
         this.value = value;
-        // UI updaten
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                // entsprechende UI Komponente updaten
-                label.setText("Bank "+getNumber()+"\n"+"Konto: "+getValue());
-            }
-        });
+        ctr.updateBankLabel(this);
     }
 
     public Point2D getPosition(){

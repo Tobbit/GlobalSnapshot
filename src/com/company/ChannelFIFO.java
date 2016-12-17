@@ -5,6 +5,7 @@ import com.company.Message;
 import com.company.Node;
 
 import java.nio.channels.Channel;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -46,7 +47,7 @@ public class ChannelFIFO extends Thread{
     public void run() {
         while (isAlive()){
             try {
-                sleep(channelDelay);
+                sleep(Config.MAX_CHANNEL_DELAY);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -63,5 +64,16 @@ public class ChannelFIFO extends Thread{
     @Override
     public String toString() {
         return "Channel "+getSource().getNumber()+"->"+getDestination().getNumber();
+    }
+
+    public String toStringExtendet() {
+        String text = toString();
+        if(!queue.isEmpty()){
+            Iterator<Message> iter = queue.iterator();
+            while(iter.hasNext()){
+                text += "\n"+iter.next().toString();
+            }
+        }
+        return text;
     }
 }
