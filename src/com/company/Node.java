@@ -13,7 +13,7 @@ import java.util.*;
 public class Node extends Thread {
     private static int countID = 0;
     private int number;
-    private ArrayList<Node> neighbors;
+    private ArrayList<ChannelFIFO> neighbors;
     private int value = 100;
     private LinkedList<Message> channel;
     private boolean isRunning = true;
@@ -26,11 +26,11 @@ public class Node extends Thread {
         channel = new LinkedList<>();
     }
 
-    public boolean linkNode(Node node){
-        if (neighbors.contains(node)){
+    public boolean linkNode(ChannelFIFO channelFIFO){
+        if (neighbors.contains(channelFIFO)){
             return false;
         }else {
-            neighbors.add(node);
+            neighbors.add(channelFIFO);
             return true;
         }
     }
@@ -59,32 +59,33 @@ public class Node extends Thread {
             try {
 
                 //Warten
-                sleep(rnd.nextInt(10000));
+                sleep(rnd.nextInt(1000));
 
-                //Nachrichten lesen
-                if(rnd.nextBoolean()) {
-                    message = readMessage();
-                    if (message != null) {
-                        System.out.println("Tread: " + getNumber() + " " + message.toString());
-                        setValue(getValue()+message.getValue());
-                        System.out.println("Tread: " + getNumber() + " Kontostand: " + getValue());
-                    }
-                }
 
-                //Warten
-                sleep(rnd.nextInt(10000));
-
+                //Nachricht verschicken
                 if(neighbors.size() > 0 && rnd.nextBoolean()){
                     int sendValue = rnd.nextInt(getValue()/2+1);
-                    Node receiver = neighbors.get(rnd.nextInt(neighbors.size()));
-                    message = new Message(sendValue,this, receiver);
-                    setValue(getValue()-sendValue);
-                    receiver.sendMessage(message);
-                    System.out.println("Tread: " + getNumber() + " Kontostand: " + getValue());
+                    if(sendValue > 0 && sendValue <= getValue()){
+                        ChannelFIFO channel = neighbors.get(rnd.nextInt(neighbors.size()));
+                        message = new Message(sendValue,this, channel.getDestination());
+                        setValue(getValue()-sendValue);
+                        channel.addMessage(message);
+                        System.out.println("Tread: " + getNumber() + " Kontostand: " + getValue());
+                    }
+
                 }
 
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                //Nachrichten lesen
+                if(rnd.nextBoolean()) {
+                    message = readMessage();
+                    while (message != null) {
+                        System.out.println("Tread: " + getNumber() + " " + message.toString());
+                        setValue(getValue()+message.getValue());
+                        System.out.println("Tread: " + getNumber() + " Kontostand: " + getValue());
+                        message = readMessage();
+                    }
+                }
             }
         }
     }
@@ -100,7 +101,7 @@ public class Node extends Thread {
             @Override
             public void run() {
                 // entsprechende UI Komponente updaten
-                label.setText("Bank "+getNumber()+"\n"+"Guthaben: "+getValue());
+                label.setText("Bank "+getNumber()+"\n"+"Konto: "+getValue());
             }
         });
     }
@@ -119,4 +120,5 @@ public class Node extends Thread {
         }
 
     }
+
 }

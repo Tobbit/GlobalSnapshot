@@ -12,6 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 /**
  * Created by Tobi on 17.12.2016.
  */
@@ -25,7 +27,7 @@ public class App extends Application {
             Canvas canvas = new Canvas(1000,1000);
             Label label = new Label();
             Node node = new Node(label);
-            label.setText("Bank "+node.getNumber()+"\n"+"Guthaben: "+node.getValue());
+            label.setText("Bank "+node.getNumber()+"\n"+"Konto: "+node.getValue());
             label.setTranslateX(node.getPosition().x+Config.RADIUS/2);
             label.setTranslateY(node.getPosition().y+Config.RADIUS/2);
             drawNode(canvas,node);
@@ -35,20 +37,25 @@ public class App extends Application {
             nodes[i] = node;
         }
 
-        nodes[0].linkNode(nodes[1]);
-        nodes[0].linkNode(nodes[3]);
-        nodes[1].linkNode(nodes[2]);
-        nodes[1].linkNode(nodes[0]);
-        nodes[1].linkNode(nodes[3]);
-        nodes[2].linkNode(nodes[4]);
-        nodes[2].linkNode(nodes[1]);
-        nodes[2].linkNode(nodes[3]);
-        nodes[3].linkNode(nodes[1]);
-        nodes[3].linkNode(nodes[2]);
-        nodes[3].linkNode(nodes[0]);
-        nodes[3].linkNode(nodes[4]);
-        nodes[4].linkNode(nodes[2]);
-        nodes[4].linkNode(nodes[3]);
+        ArrayList<ChannelFIFO> channels = new ArrayList<>();
+        channels.add(new ChannelFIFO(nodes[0],nodes[1]));
+        channels.add(new ChannelFIFO(nodes[0],nodes[3]));
+        channels.add(new ChannelFIFO(nodes[1],nodes[2]));
+        channels.add(new ChannelFIFO(nodes[1],nodes[0]));
+        channels.add(new ChannelFIFO(nodes[1],nodes[3]));
+        channels.add(new ChannelFIFO(nodes[2],nodes[4]));
+        channels.add(new ChannelFIFO(nodes[2],nodes[1]));
+        channels.add(new ChannelFIFO(nodes[2],nodes[3]));
+        channels.add(new ChannelFIFO(nodes[3],nodes[1]));
+        channels.add(new ChannelFIFO(nodes[3],nodes[2]));
+        channels.add(new ChannelFIFO(nodes[3],nodes[0]));
+        channels.add(new ChannelFIFO(nodes[3],nodes[4]));
+        channels.add(new ChannelFIFO(nodes[4],nodes[2]));
+        channels.add(new ChannelFIFO(nodes[4],nodes[3]));
+
+        for (ChannelFIFO channel: channels){
+            channel.start();
+        }
 
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
