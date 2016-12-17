@@ -20,36 +20,47 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Drawing Operations Test");
         Group root = new Group();
-        Node[] nodes = loadNodes(5);
-        for(Node node: nodes){
+        Node[] nodes = new Node[5];
+        for(int i = 0; i < nodes.length; i++){
             Canvas canvas = new Canvas(1000,1000);
+            Label label = new Label();
+            Node node = new Node(label);
+            label.setText("Bank "+node.getNumber()+"\n"+"Guthaben: "+node.getValue());
+            label.setTranslateX(node.getPosition().x+Config.RADIUS/2);
+            label.setTranslateY(node.getPosition().y+Config.RADIUS/2);
             drawNode(canvas,node);
             root.getChildren().add(canvas);
+            root.getChildren().add(label);
+            node.start();
+            nodes[i] = node;
         }
+
+        nodes[0].linkNode(nodes[1]);
+        nodes[0].linkNode(nodes[3]);
+        nodes[1].linkNode(nodes[2]);
+        nodes[1].linkNode(nodes[0]);
+        nodes[1].linkNode(nodes[3]);
+        nodes[2].linkNode(nodes[4]);
+        nodes[2].linkNode(nodes[1]);
+        nodes[2].linkNode(nodes[3]);
+        nodes[3].linkNode(nodes[1]);
+        nodes[3].linkNode(nodes[2]);
+        nodes[3].linkNode(nodes[0]);
+        nodes[3].linkNode(nodes[4]);
+        nodes[4].linkNode(nodes[2]);
+        nodes[4].linkNode(nodes[3]);
 
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 
-    private Node[] loadNodes(int i){
-       if(i<0){
-           return null;
-       }
-        Node[] nodes = new Node[i];
-        for(;i>0;i--){
-            nodes[i-1] = new Node();
-        }
-        return nodes;
-    }
+
 
     private void drawNode(Canvas canvas, Node node){
         GraphicsContext gc = canvas.getGraphicsContext2D();
         Point2D point = node.getPosition();
         gc.setFill(Config.FILL_COLOR);
         gc.fillOval(point.x,point.y,Config.RADIUS*2,Config.RADIUS*2);
-        gc.strokeText("Bank "+node.getNumber(),point.x+Config.RADIUS/2,point.y+Config.RADIUS);
-        gc.strokeText("Guthaben: "+node.getValue(),point.x+Config.RADIUS/2,point.y+Config.RADIUS+gc.getFont().getSize());
-
     }
 
     private void drawShapes(GraphicsContext gc) {

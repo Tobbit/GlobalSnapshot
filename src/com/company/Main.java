@@ -1,15 +1,19 @@
 package com.company;
 
+import javafx.scene.canvas.Canvas;
+
 import javax.swing.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        Node testNode1 = new Node();
-        Node testNode2 = new Node();
-        Node testNode3 = new Node();
-        Node testNode4 = new Node();
-        Node testNode5 = new Node();
+        /*
+        Canvas canvas = new Canvas();
+        Node testNode1 = new Node(canvas);
+        Node testNode2 = new Node(canvas);
+        Node testNode3 = new Node(canvas);
+        Node testNode4 = new Node(canvas);
+        Node testNode5 = new Node(canvas);
 
         testNode1.linkNode(testNode2);
         testNode1.linkNode(testNode4);
@@ -31,7 +35,7 @@ public class Main {
         testNode3.start();
         testNode4.start();
         testNode5.start();
-
+ */
         App.launch(args);
     }
 
