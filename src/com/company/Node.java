@@ -1,12 +1,14 @@
 package com.company;
 
+import com.sun.javafx.geom.Point2D;
+
 import java.util.*;
 
 /**
  * Created by Tobi on 16.12.2016.
  */
 public class Node extends Thread {
-    private static int countID;
+    private static int countID = 0;
     private int number;
     private ArrayList<Node> neighbors;
     private int value = 100;
@@ -15,7 +17,7 @@ public class Node extends Thread {
 
     public Node() {
         neighbors = new ArrayList<>();
-        number = countID++;
+        number = ++countID;
         channel = new LinkedList<>();
     }
 
@@ -86,7 +88,22 @@ public class Node extends Thread {
         return value;
     }
 
-    public void setValue(int value) {
+    private void setValue(int value) {
         this.value = value;
+    }
+
+    public Point2D getPosition(){
+        return getMyPosition(getNumber());
+    }
+
+    private static Point2D getMyPosition(int number){
+        float[] xPositions = {360,150,350,570,750};
+        float[] yPositions = {120,390,660,450,600};
+        if(number > xPositions.length || number <= 0){
+            return new Point2D(0,0);
+        }else {
+            return new Point2D(xPositions[number-1], yPositions[number-1]);
+        }
+
     }
 }

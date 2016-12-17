@@ -32,7 +32,7 @@ public class Main {
         testNode4.start();
         testNode5.start();
 
-        startGui();
+        App.launch(args);
     }
 
     private static void startGui(){
@@ -41,7 +41,6 @@ public class Main {
         f.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         f.setSize( 1000, 1000);
         f.add( panel );
-        f.add(new NodeGrafik());
         f.setVisible( true );
     }
 }
