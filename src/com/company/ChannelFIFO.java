@@ -12,7 +12,7 @@ import java.util.Random;
 /**
  * Created by leno on 17.12.16.
  */
-public class ChannelFIFO extends Thread{
+public class ChannelFIFO {
     private Node source;
     private Node destination;
     private final int channelDelay;

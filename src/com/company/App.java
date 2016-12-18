@@ -13,6 +13,7 @@ import javafx.scene.shape.ArcType;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Created by Tobi on 17.12.2016.
@@ -23,8 +24,11 @@ public class App extends Application {
         primaryStage.setTitle("Drawing Operations Test");
 
         Group root = new Group();
-
-        Controller controller = new Controller(root);
+        LinkedList<Label> labels = new LinkedList<Label>();
+        for (int i = 0; i < 50; i++){
+            labels.add(new Label());
+        }
+        Controller controller = new Controller(labels);
 
         Node[] nodes = new Node[5];
         for(int i = 0; i < nodes.length; i++){
@@ -69,9 +73,6 @@ public class App extends Application {
             root.getChildren().add(scrollPane);
         }
 
-        for (ChannelFIFO channel: channels){
-            channel.start();
-        }
 
         primaryStage.setScene(new Scene(root));
         primaryStage.show();

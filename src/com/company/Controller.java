@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * Created by leno on 17.12.16.
@@ -15,11 +16,11 @@ public class Controller {
     private HashMap<Integer,Label> bankLabels = new HashMap<>();
     private HashMap<ChannelFIFO,Label> channelLabels = new HashMap<>();
     private HashMap<Message,Label> messageLabels = new HashMap<>();
-    private Group root;
+    private LinkedList<Label> labelStorage;
 
 
-    public Controller(Group root) {
-        this.root = root;
+    public Controller(LinkedList<Label> labels) {
+        this.labelStorage = labels;
     }
 
     public void addBankLabel(Node node, Label label){
@@ -31,30 +32,35 @@ public class Controller {
     }
 
     public void registerMessage(Message message){
-        Label label = new Label(message.toString());
+        Label label;
+        while (labelStorage.isEmpty()){
+            try {
+                message.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        label = labelStorage.removeFirst();
+        label.setVisible(true);
         messageLabels.put(message,label);
 
         label.setTranslateX(message.getChannel().getSource().getPosition().x);
         label.setTranslateY(message.getChannel().getSource().getPosition().y);
-
-        root.getChildren().add(label);
     }
 
     public void updateMessage(Message message, Point2D point){
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                Label label = messageLabels.get(message);
-                label.setTranslateX(point.x);
-                label.setTranslateY(point.y);
-            }
+        Platform.runLater(() -> {
+            Label label = messageLabels.get(message);
+            label.setTranslateX(point.x);
+            label.setTranslateY(point.y);
         });
     }
 
     public void deregisterMessage(Message message){
         Label label = messageLabels.get(message);
         messageLabels.remove(message);
-        root.getChildren().remove(label);
+        labelStorage.addLast(label);
+        label.setVisible(false);
     }
 
     public void updateBankLabel(Node node){
