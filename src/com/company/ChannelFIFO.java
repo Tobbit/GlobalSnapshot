@@ -17,8 +17,10 @@ public class ChannelFIFO extends Thread{
     private Node destination;
     private final int channelDelay;
     private LinkedList<Message> queue;
+    private Controller controller;
 
-    public ChannelFIFO(Node source, Node destination) {
+    public ChannelFIFO(Node source, Node destination, Controller controller) {
+        this.controller = controller;
         this.source = source;
         this.destination = destination;
         source.linkNode(this);
@@ -29,6 +31,9 @@ public class ChannelFIFO extends Thread{
 
     public void addMessage(Message message){
         queue.addFirst(message);
+        controller.updateChannelLabel(this);
+        controller.registerMessage(message);
+        message.start();
     }
 
     public Node getSource() {
@@ -39,26 +44,12 @@ public class ChannelFIFO extends Thread{
         return destination;
     }
 
-    private void deliverMessage(Message message){
-        destination.sendMessage(message);
+    public int getChannelDelay() {
+        return channelDelay;
     }
 
-    @Override
-    public void run() {
-        while (isAlive()){
-            try {
-                sleep(Config.MAX_CHANNEL_DELAY);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            if(!queue.isEmpty()){
-                Message message = queue.removeLast();
-                System.out.println(toString()+" "+message.toString());
-                destination.sendMessage(message);
-                destination.interrupt();
-            }
-        }
+    private void deliverMessage(Message message){
+        destination.sendMessage(message);
     }
 
     @Override
@@ -75,5 +66,9 @@ public class ChannelFIFO extends Thread{
             }
         }
         return text;
+    }
+
+    public Controller getController() {
+        return controller;
     }
 }

@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.stage.Stage;
@@ -21,8 +21,11 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Drawing Operations Test");
-        Controller controller = new Controller();
+
         Group root = new Group();
+
+        Controller controller = new Controller(root);
+
         Node[] nodes = new Node[5];
         for(int i = 0; i < nodes.length; i++){
             Canvas canvas = new Canvas(1000,1000);
@@ -40,20 +43,31 @@ public class App extends Application {
         }
 
         ArrayList<ChannelFIFO> channels = new ArrayList<>();
-        channels.add(new ChannelFIFO(nodes[0],nodes[1]));
-        channels.add(new ChannelFIFO(nodes[0],nodes[3]));
-        channels.add(new ChannelFIFO(nodes[1],nodes[2]));
-        channels.add(new ChannelFIFO(nodes[1],nodes[0]));
-        channels.add(new ChannelFIFO(nodes[1],nodes[3]));
-        channels.add(new ChannelFIFO(nodes[2],nodes[4]));
-        channels.add(new ChannelFIFO(nodes[2],nodes[1]));
-        channels.add(new ChannelFIFO(nodes[2],nodes[3]));
-        channels.add(new ChannelFIFO(nodes[3],nodes[1]));
-        channels.add(new ChannelFIFO(nodes[3],nodes[2]));
-        channels.add(new ChannelFIFO(nodes[3],nodes[0]));
-        channels.add(new ChannelFIFO(nodes[3],nodes[4]));
-        channels.add(new ChannelFIFO(nodes[4],nodes[2]));
-        channels.add(new ChannelFIFO(nodes[4],nodes[3]));
+        channels.add(new ChannelFIFO(nodes[0],nodes[1],controller));
+        channels.add(new ChannelFIFO(nodes[0],nodes[3],controller));
+        channels.add(new ChannelFIFO(nodes[1],nodes[2],controller));
+        channels.add(new ChannelFIFO(nodes[1],nodes[0],controller));
+        channels.add(new ChannelFIFO(nodes[1],nodes[3],controller));
+        channels.add(new ChannelFIFO(nodes[2],nodes[4],controller));
+        channels.add(new ChannelFIFO(nodes[2],nodes[1],controller));
+        channels.add(new ChannelFIFO(nodes[2],nodes[3],controller));
+        channels.add(new ChannelFIFO(nodes[3],nodes[1],controller));
+        channels.add(new ChannelFIFO(nodes[3],nodes[2],controller));
+        channels.add(new ChannelFIFO(nodes[3],nodes[0],controller));
+        channels.add(new ChannelFIFO(nodes[3],nodes[4],controller));
+        channels.add(new ChannelFIFO(nodes[4],nodes[2],controller));
+        channels.add(new ChannelFIFO(nodes[4],nodes[3],controller));
+
+        for (ChannelFIFO channel:channels) {
+            Label label = new Label();
+            ScrollPane scrollPane = new ScrollPane(label);
+            controller.addChannelLabel(channel,label);
+            Point2D source = channel.getSource().getPosition();
+            Point2D receiver = channel.getDestination().getPosition();
+            scrollPane.setTranslateX((source.x+receiver.x)/2);
+            scrollPane.setTranslateY((source.y+receiver.y)/2);
+            root.getChildren().add(scrollPane);
+        }
 
         for (ChannelFIFO channel: channels){
             channel.start();

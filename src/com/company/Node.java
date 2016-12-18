@@ -65,7 +65,7 @@ public class Node extends Thread {
                     int sendValue = rnd.nextInt(getValue()/2+1);
                     if(sendValue > 0 && sendValue <= getValue()){
                         ChannelFIFO channel = neighbors.get(rnd.nextInt(neighbors.size()));
-                        message = new Message(sendValue,this, channel.getDestination());
+                        message = new Message(sendValue, channel);
                         setValue(getValue()-sendValue);
                         channel.addMessage(message);
                         System.out.println("Tread: " + getNumber() + " Kontostand: " + getValue());
