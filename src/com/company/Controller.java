@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 /**
  * Created by leno on 17.12.16.
@@ -32,15 +33,15 @@ public class Controller {
     }
 
     public void registerMessage(Message message){
-        Label label;
-        while (labelStorage.isEmpty()){
+        Label label = null;
+        while (label== null){
             try {
-                message.sleep(10);
-            } catch (InterruptedException e) {
+               label = labelStorage.removeFirst();
+            } catch ( NoSuchElementException  e) {
                 e.printStackTrace();
             }
         }
-        label = labelStorage.removeFirst();
+
         label.setVisible(true);
         messageLabels.put(message,label);
 
